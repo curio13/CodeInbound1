@@ -1,12 +1,11 @@
-
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import './App.css';
 
-// Custom hook for managing local storage
 function useLocalStorage(key, initialValue) {
   const [storedValue, setStoredValue] = useState(() => {
     try {
       const item = window.localStorage.getItem(key);
+      console.log(item);
       return item ? JSON.parse(item) : initialValue;
     } catch (error) {
       console.error(`Error getting localStorage item "${key}"`, error);
@@ -30,7 +29,8 @@ function App() {
   const [started, setStarted] = useState(false);
   const [ratings, setRatings] = useLocalStorage('surveyRatings', {});
   const [currentQuestionIndex, setCurrentQuestionIndex] = useState(0);
-
+  const [submit,setSubmit] = useState(false);
+  const [thankYou, setThankYou] = useState(false);
   const questions = [
     "How satisfied are you with our products? ",
     "How fair are the prices compared to similar retailers? ",
@@ -46,6 +46,9 @@ function App() {
   };
 
   const handleNext = () => {
+    if(currentQuestionIndex === questions.length - 1){
+      setSubmit(true);
+    }
     if (currentQuestionIndex < questions.length - 1) {
       setCurrentQuestionIndex(currentQuestionIndex + 1);
     }
@@ -65,6 +68,22 @@ function App() {
     });
   };
 
+  const handleSubmit = () => {
+    setThankYou(true);
+    setSubmit(false);
+  };
+
+  useEffect(() => {
+    if (thankYou) {
+      const timer = setTimeout(() => {
+        setStarted(false);
+        setThankYou(false);
+        setCurrentQuestionIndex(0); 
+      }, 5000);
+      return () => clearTimeout(timer); 
+    }
+  }, [thankYou]);
+
   const renderRatingOptions = (maxRating) => {
     return Array.from({ length: maxRating }, (_, i) => (
       <span
@@ -75,6 +94,27 @@ function App() {
         {i + 1}
       </span>
     ));
+  };
+
+  const renderSubmit = ()=>{
+    return (
+      <div className='container' >
+        <h1 className='sub' > Are u sure u want to submit?</h1>
+        <div className="navigation-buttons">
+          <button onClick={() => setSubmit(false)}>Go Back</button>
+          <button onClick={handleSubmit}>Submit</button>
+        </div>
+      </div>
+    )
+  }
+
+  const renderThankYou = () => {
+    return (
+      <div className='container'>
+        <h1>Thank you for your time!</h1>
+        <p>We appreciate your feedback. You will be redirected to the welcome screen shortly.</p>
+      </div>
+    );
   };
 
   const renderQuestion = () => {
@@ -104,6 +144,14 @@ function App() {
     );
   };
 
+  if (thankYou) {
+    return (
+      <div id='root'>
+        {renderThankYou()}
+      </div>
+    );
+  }
+
   if (!started) {
     return (
       <div id="root">
@@ -117,21 +165,25 @@ function App() {
   }
   return (
     <div id='root'>
-      <div className="container">
-        <div className="header">
-          <h1>Customer Survey</h1>
-          <span>{currentQuestionIndex + 1}/{questions.length}</span>
+      {submit ? (
+        renderSubmit()
+      ) : (
+        <div className="container">
+          <div className="header">
+            <h1>Customer Survey</h1>
+            <span>{currentQuestionIndex + 1}/{questions.length}</span>
+          </div>
+          {renderQuestion()}
+          <div className="navigation-buttons">
+            <button onClick={handlePrevious} disabled={currentQuestionIndex === 0}>
+              Previous
+            </button>
+            <button onClick={handleNext}>
+              {currentQuestionIndex === questions.length - 1 ? 'Submit' : 'Next'}
+            </button>
+          </div>
         </div>
-        {renderQuestion()}
-        <div className="navigation-buttons">
-          <button onClick={handlePrevious} disabled={currentQuestionIndex === 0}>
-            Previous
-          </button>
-          <button onClick={handleNext} disabled={currentQuestionIndex === questions.length - 1}>
-            Next
-          </button>
-        </div>
-      </div>
+      )}
     </div>
   );
 }

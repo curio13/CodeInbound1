@@ -1,4 +1,4 @@
-body {
+ body {
     font-family: Arial, sans-serif;
     margin: 0;
     padding: 0;
@@ -11,12 +11,18 @@ body {
     align-items: center;
     height: 100vh;
   }
+
+  .container h1,p{
+    text-align: center;
+  }
   
   .container {
     background: white;
     border-radius: 8px;
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-    width: 400px; 
+    max-width: 500px;
+    width: 80%; 
+    min-width: 400px;
     height: 40%; 
     padding: 20px;
     box-sizing: border-box;
@@ -75,6 +81,11 @@ body {
     cursor: pointer;
     user-select: none;
   }
+
+  .sub{
+    text-align: center;
+    line-height: 60px;
+  }
   
   .rating-circle.selected {
     background-color: #4caf50;
@@ -83,6 +94,7 @@ body {
   
   textarea {
     width: 100%;
+    height: 30%;
     padding: 10px;
     border: 1px solid #ddd;
     border-radius: 4px;
@@ -153,4 +165,4 @@ body {
 
 .welcome-screen button:hover {
   background-color: #45a049;
-}
+} 
