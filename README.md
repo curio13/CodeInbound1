@@ -21,5 +21,5 @@ This project is a simple customer survey application built using React. The app 
 1. Clone the repository:
 
    ```bash
-   git clone https://github.com/yourusername/customer-survey-app.git
+   git clone https://github.com/curio13/CodeInbound1
    cd customer-survey-app
